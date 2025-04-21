@@ -1,6 +1,9 @@
 package utils
 
-import "path/filepath"
+import (
+	"path/filepath"
+	"strings"
+)
 
 func Must[T any](obj T, err error) T {
 	AssertNil(err)
@@ -14,4 +17,8 @@ func AssertNil(err error) {
 
 func IsMarkdown(path string) bool {
 	return filepath.Ext(path) == ".md"
+}
+
+func SetExt(path, ext string) string {
+	return strings.TrimSuffix(path, filepath.Ext(path)) + ext
 }
