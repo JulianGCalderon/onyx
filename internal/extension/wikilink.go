@@ -1,9 +1,10 @@
 package extension
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
-	"slices"
+	"regexp"
 	"strings"
 
 	"github.com/yuin/goldmark"
@@ -50,68 +51,37 @@ func (w *wikilinkParser) Trigger() []byte {
 }
 
 func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
-	line, segment := block.PeekLine()
+	reTarget := `([^|#]+)`
+	reHash := `(#[^|]+)?`
+	reTitle := `(\|.+)?`
+	reFull := fmt.Sprintf(`^\[\[%v%v%v\]\]`, reTarget, reHash, reTitle)
 
-	// wikilink should start with '[['
-	if len(line) < 5 {
+	_, segment := block.Position()
+	re := regexp.MustCompile(reFull)
+	matches := block.FindSubMatch(re)
+	if len(matches) != 4 {
 		return nil
 	}
-	if !slices.Equal(line[:2], []byte{'[', '['}) {
-		return nil
+	target := matches[1]
+	hash := matches[2]
+	title := matches[3]
+
+	if len(title) == 0 {
+		segment.Start += len("[[")
+		title = append(target, hash...)
+	} else {
+		segment.Start += len("[[") + len(target) + len(hash) + len("|")
+		title = title[1:]
 	}
-
-	// wikilink should end with ']]'
-	closingIndex := slices.Index(line, ']')
-	if closingIndex < 0 || len(line) < closingIndex+1 {
-		return nil
-	}
-	if !slices.Equal(line[closingIndex:closingIndex+2], []byte{']', ']'}) {
-		return nil
-	}
-
-	block.Advance(closingIndex + 2)
-
-	var (
-		wikilinkStart int = 2
-		wikilinkEnd   int = closingIndex
-		targetStart   int = wikilinkStart
-		targetEnd     int = wikilinkEnd
-		titleStart    int = wikilinkStart
-		titleEnd      int = wikilinkEnd
-		hashStart     int
-		hashEnd       int
-	)
-
-	verticalIndex := slices.Index(line, '|')
-	hashIndex := slices.Index(line, '#')
-
-	if verticalIndex >= 0 {
-		targetEnd = verticalIndex
-		titleStart = verticalIndex + 1
-	}
-
-	if hashIndex >= 0 {
-		hashStart = hashIndex
-		hashEnd = targetEnd
-		targetEnd = hashStart
-	}
-
-	title := line[titleStart:titleEnd]
-	target := line[targetStart:targetEnd]
-	text := text.Segment{
-		Start:        segment.Start + titleStart,
-		Stop:         segment.Start + wikilinkEnd,
-		Padding:      segment.Padding,
-		ForceNewline: segment.ForceNewline,
-	}
+	segment.Stop = segment.Start + len(title)
 
 	destination := []byte(p.resolveTarget(string(target)))
-	destination = append(destination, line[hashStart:hashEnd]...)
+	destination = append(destination, hash...)
 
 	link := ast.NewLink()
 	link.Title = title
 	link.Destination = destination
-	link.AppendChild(link, ast.NewTextSegment(text))
+	link.AppendChild(link, ast.NewTextSegment(segment))
 
 	return link
 }
