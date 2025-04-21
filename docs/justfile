@@ -1,6 +1,7 @@
 # build docs
 build:
     mkdir public
+    cp -r styles public
 
 # serve docs
 serve: build
