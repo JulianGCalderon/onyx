@@ -1,13 +1,17 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"io"
 	"io/fs"
+	"juliangcalderon/onyx/internal"
 	"juliangcalderon/onyx/internal/utils"
+	"os"
 	"path/filepath"
 )
 
 const ContentPath = "content"
+const PublicPath = "public"
 
 func main() {
 	files := make([]string, 0)
@@ -29,6 +33,20 @@ func main() {
 	utils.AssertNil(err)
 
 	for _, file := range files {
-		fmt.Println(file)
+		srcPath := filepath.Join(ContentPath, file)
+		dstPath := internal.BuildDstPath(file, PublicPath)
+
+		content, err := os.ReadFile(srcPath)
+		utils.AssertNil(err)
+
+		dstParent := filepath.Dir(dstPath)
+		err = os.MkdirAll(dstParent, 0o775)
+		utils.AssertNil(err)
+
+		dstFile, err := os.Create(dstPath)
+		utils.AssertNil(err)
+		defer dstFile.Close()
+
+		io.Copy(dstFile, bytes.NewReader(content))
 	}
 }
