@@ -51,7 +51,7 @@ func (w *wikilinkParser) Trigger() []byte {
 }
 
 func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
-	reTarget := `([^|#]+)`
+	reTarget := `([^|#]*)`
 	reHash := `(#[^|]+)?`
 	reTitle := `(\|.+)?`
 	reFull := fmt.Sprintf(`^\[\[%v%v%v\]\]`, reTarget, reHash, reTitle)
@@ -97,6 +97,9 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 // 2. Relative path from current directory.
 // 3. Target note has an unique basename.
 func (p *wikilinkParser) resolveTarget(target string) string {
+	if target == "" {
+		return ""
+	}
 	if filepath.Ext(target) == "" {
 		target += ".md"
 	}
