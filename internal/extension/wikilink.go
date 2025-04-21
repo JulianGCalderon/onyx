@@ -1,7 +1,10 @@
 package extension
 
 import (
+	"log"
+	"path/filepath"
 	"slices"
+	"strings"
 
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/ast"
@@ -46,7 +49,7 @@ func (w *wikilinkParser) Trigger() []byte {
 	return []byte{'['}
 }
 
-func (w *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
+func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
 	line, segment := block.PeekLine()
 
 	// wikilink should start with '[['
@@ -77,10 +80,67 @@ func (w *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	segment.Start += 2
 	segment.Stop = segment.Start + len(line)
 
+	destination := []byte(p.resolveTarget(string(line)))
+
 	link := ast.NewLink()
 	link.Title = line
-	link.Destination = line
+	link.Destination = destination
 	link.AppendChild(link, ast.NewTextSegment(segment))
 
 	return link
+}
+
+// Resolves the wikilink target returning a path relative to the current directory.
+//
+// If the target has no extension, it assumes that it has extension ".md". If
+// the target file is a markdown file, the final path will have no extension.
+//
+// The note resolution has the following precedence rules:
+//
+// 1. Absolute path from vault root.
+// 2. Relative path from current directory.
+// 3. Target note has an unique basename.
+func (p *wikilinkParser) resolveTarget(target string) string {
+	if filepath.Ext(target) == "" {
+		target += ".md"
+	}
+
+	// resolve absolute target
+	_, ok := p.files[target]
+	if ok {
+		return p.buildPath(target)
+	}
+
+	// resolve relative target
+	targetAsRelative := filepath.Join(p.cwd, target)
+	_, ok = p.files[targetAsRelative]
+	if ok {
+		return p.buildPath(targetAsRelative)
+	}
+
+	// resolve path to unique note
+	for note := range p.files {
+		if filepath.Base(note) == target {
+			return p.buildPath(note)
+		}
+	}
+
+	return p.buildPath(target)
+}
+
+// Builds a path to `destination`, relative to the current directory.
+//
+// If the target is a markdown file, then the final path will have no extension.
+func (p *wikilinkParser) buildPath(destination string) string {
+	destination, err := filepath.Rel(p.cwd, destination)
+	if err != nil {
+		log.Panicf("%v and %v should share root", p.cwd, destination)
+	}
+
+	if filepath.Ext(destination) == ".md" {
+		destination = strings.TrimSuffix(destination, ".md")
+	}
+
+	return destination
+
 }

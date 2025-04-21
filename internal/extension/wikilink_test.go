@@ -65,5 +65,23 @@ func TestWikilink(t *testing.T) {
 			Markdown:    `[[]]`,
 			Expected:    `<p>[[]]</p>`,
 		},
+		{
+			No:          8,
+			Description: "Absolute Wikilink",
+			Markdown:    `[[file1]]`,
+			Expected:    `<p><a href="../file1" title="file1">file1</a></p>`,
+		},
+		{
+			No:          9,
+			Description: "Unique Wikilink",
+			Markdown:    `[[file4]]`,
+			Expected:    `<p><a href="sub/file4" title="file4">file4</a></p>`,
+		},
+		{
+			No:          10,
+			Description: "Relative Wikilink in Subdir",
+			Markdown:    `[[sub/file4]]`,
+			Expected:    `<p><a href="sub/file4" title="sub/file4">sub/file4</a></p>`,
+		},
 	}, t)
 }
