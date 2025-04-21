@@ -7,6 +7,10 @@ check:
     go fmt ./...
     go vet ./...
 
+# tests onyx
+test:
+    go test ./...
+
 # runs onyx
 run:
     go run ./cmd/onyx
