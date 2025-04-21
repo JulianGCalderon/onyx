@@ -24,7 +24,7 @@ func main() {
 		if err != nil {
 			return err
 		}
-		if !utils.IsMarkdown(path) {
+		if d.IsDir() {
 			return nil
 		}
 
