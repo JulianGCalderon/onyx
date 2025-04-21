@@ -83,5 +83,11 @@ func TestWikilink(t *testing.T) {
 			Markdown:    `[[sub/file4]]`,
 			Expected:    `<p><a href="sub/file4" title="sub/file4">sub/file4</a></p>`,
 		},
+		{
+			No:          11,
+			Description: "Wikilink with Title",
+			Markdown:    `[[sub/file4|custom title]]`,
+			Expected:    `<p><a href="sub/file4" title="custom title">custom title</a></p>`,
+		},
 	}, t)
 }

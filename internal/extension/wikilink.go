@@ -53,7 +53,7 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	line, segment := block.PeekLine()
 
 	// wikilink should start with '[['
-	if len(line) < 2 {
+	if len(line) < 5 {
 		return nil
 	}
 	if !slices.Equal(line[:2], []byte{'[', '['}) {
@@ -69,23 +69,41 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 		return nil
 	}
 
-	// wikilink should not be empty
-	line = line[2:closingIndex]
-	if len(line) == 0 {
-		return nil
+	block.Advance(closingIndex + 2)
+	var (
+		wikilinkStart int = 2
+		wikilinkEnd   int = closingIndex
+	)
+
+	var (
+		titleStart int
+		targetEnd  int
+	)
+
+	verticalIndex := slices.Index(line, '|')
+	if verticalIndex >= 0 {
+		targetEnd = verticalIndex
+		titleStart = verticalIndex + 1
+	} else {
+		targetEnd = wikilinkEnd
+		titleStart = wikilinkStart
 	}
 
-	block.Advance(closingIndex + 2)
+	title := line[titleStart:wikilinkEnd]
+	target := line[wikilinkStart:targetEnd]
+	text := text.Segment{
+		Start:        segment.Start + titleStart,
+		Stop:         segment.Start + wikilinkEnd,
+		Padding:      segment.Padding,
+		ForceNewline: segment.ForceNewline,
+	}
 
-	segment.Start += 2
-	segment.Stop = segment.Start + len(line)
-
-	destination := []byte(p.resolveTarget(string(line)))
+	destination := []byte(p.resolveTarget(string(target)))
 
 	link := ast.NewLink()
-	link.Title = line
+	link.Title = title
 	link.Destination = destination
-	link.AppendChild(link, ast.NewTextSegment(segment))
+	link.AppendChild(link, ast.NewTextSegment(text))
 
 	return link
 }
