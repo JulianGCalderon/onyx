@@ -8,6 +8,8 @@ import (
 	"juliangcalderon/onyx/internal/utils"
 	"os"
 	"path/filepath"
+
+	"github.com/yuin/goldmark"
 )
 
 const ContentPath = "content"
@@ -47,6 +49,16 @@ func main() {
 		utils.AssertNil(err)
 		defer dstFile.Close()
 
-		io.Copy(dstFile, bytes.NewReader(content))
+		if !utils.IsMarkdown(file) {
+			io.Copy(dstFile, bytes.NewReader(content))
+			continue
+		}
+
+		var html bytes.Buffer
+		markdown := goldmark.New()
+		err = markdown.Convert(content, &html)
+		utils.AssertNil(err)
+
+		io.Copy(dstFile, bytes.NewReader(html.Bytes()))
 	}
 }
