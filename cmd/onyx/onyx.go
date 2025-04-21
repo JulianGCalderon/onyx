@@ -15,6 +15,7 @@ import (
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/text"
 )
 
 const ContentPath = "content"
@@ -53,7 +54,7 @@ func main() {
 		dstPath := internal.BuildDstPath(file, PublicPath)
 		fileDir := filepath.Dir(file)
 
-		content, err := os.ReadFile(srcPath)
+		source, err := os.ReadFile(srcPath)
 		utils.AssertNil(err)
 
 		dstParent := filepath.Dir(dstPath)
@@ -65,7 +66,7 @@ func main() {
 		defer dstFile.Close()
 
 		if !utils.IsMarkdown(file) {
-			io.Copy(dstFile, bytes.NewReader(content))
+			io.Copy(dstFile, bytes.NewReader(source))
 			continue
 		}
 
@@ -77,7 +78,9 @@ func main() {
 				parser.WithAutoHeadingID(),
 			),
 		)
-		err = markdown.Convert(content, &html)
+
+		ast := markdown.Parser().Parse(text.NewReader(source))
+		err = markdown.Renderer().Render(&html, source, ast)
 		utils.AssertNil(err)
 
 		ctx := internal.PageContext{
