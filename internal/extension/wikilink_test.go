@@ -12,6 +12,7 @@ func TestWikilink(t *testing.T) {
 	cwd := "dir"
 	files := map[string]struct{}{
 		"file1.md":         {},
+		"file1.png":        {},
 		"dir/file2.md":     {},
 		"dir/file3.md":     {},
 		"dir/sub/file4.md": {},
@@ -100,6 +101,12 @@ func TestWikilink(t *testing.T) {
 			Description: "Wikilink with Hash and Title",
 			Markdown:    `[[sub/file4#heading1|custom title]]`,
 			Expected:    `<p><a href="sub/file4#heading1" title="custom title">custom title</a></p>`,
+		},
+		{
+			No:          14,
+			Description: "Wikilink with non markdown link",
+			Markdown:    `[[file1.png]]`,
+			Expected:    `<p><a href="../file1.png" title="file1.png">file1.png</a></p>`,
 		},
 	}, t)
 }
