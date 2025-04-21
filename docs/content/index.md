@@ -8,3 +8,5 @@ Internally, it uses [goldmark](https://github.com/yuin/goldmark), a Markdown par
 - Definition Lists
 - Footnotes
 - Wikilinks
+
+Explore the [[gallery]] to see these features in action.
