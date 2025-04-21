@@ -5,12 +5,15 @@ import (
 	"io"
 	"io/fs"
 	"juliangcalderon/onyx/internal"
+	myExtension "juliangcalderon/onyx/internal/extension"
 	"juliangcalderon/onyx/internal/utils"
 	"os"
 	"path/filepath"
 	"text/template"
 
 	"github.com/yuin/goldmark"
+	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 )
 
 const ContentPath = "content"
@@ -36,12 +39,18 @@ func main() {
 	})
 	utils.AssertNil(err)
 
+	filesSet := make(map[string]struct{})
+	for _, file := range files {
+		filesSet[file] = struct{}{}
+	}
+
 	templates, err := template.ParseGlob(filepath.Join(TemplatesPath, "*"))
 	utils.AssertNil(err)
 
 	for _, file := range files {
 		srcPath := filepath.Join(ContentPath, file)
 		dstPath := internal.BuildDstPath(file, PublicPath)
+		fileDir := filepath.Dir(file)
 
 		content, err := os.ReadFile(srcPath)
 		utils.AssertNil(err)
@@ -60,12 +69,18 @@ func main() {
 		}
 
 		var html bytes.Buffer
-		markdown := goldmark.New()
+		markdown := goldmark.New(
+
+			goldmark.WithExtensions(extension.GFM, extension.DefinitionList, extension.Footnote, extension.Typographer, myExtension.NewWikilink(fileDir, filesSet)),
+			goldmark.WithParserOptions(
+				parser.WithAutoHeadingID(),
+			),
+		)
 		err = markdown.Convert(content, &html)
 		utils.AssertNil(err)
 
 		ctx := internal.PageContext{
-			Dir:     filepath.Dir(file),
+			Dir:     fileDir,
 			Content: html.String(),
 		}
 
