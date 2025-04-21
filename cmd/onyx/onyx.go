@@ -8,12 +8,14 @@ import (
 	"juliangcalderon/onyx/internal/utils"
 	"os"
 	"path/filepath"
+	"text/template"
 
 	"github.com/yuin/goldmark"
 )
 
 const ContentPath = "content"
 const PublicPath = "public"
+const TemplatesPath = "templates"
 
 func main() {
 	files := make([]string, 0)
@@ -32,6 +34,9 @@ func main() {
 
 		return nil
 	})
+	utils.AssertNil(err)
+
+	templates, err := template.ParseGlob(filepath.Join(TemplatesPath, "*"))
 	utils.AssertNil(err)
 
 	for _, file := range files {
@@ -59,6 +64,7 @@ func main() {
 		err = markdown.Convert(content, &html)
 		utils.AssertNil(err)
 
-		io.Copy(dstFile, bytes.NewReader(html.Bytes()))
+		err = templates.ExecuteTemplate(dstFile, "root.gotmpl", html.String())
+		utils.AssertNil(err)
 	}
 }
