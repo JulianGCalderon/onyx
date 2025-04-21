@@ -73,6 +73,24 @@ int main(int argc, char** argv) {
 }
 ```
 
+## Math
+
+You can display inline math equations with `$`: $a^2 + b^2 = c^2$
+
+You can display block math equations with `$$`:
+
+$$
+\left[ \begin{array}{a} a^l_1 \\ ⋮ \\ a^l_{d_l} \end{array}\right]
+= \sigma(
+ \left[ \begin{matrix}
+    w^l_{1,1} & ⋯  & w^l_{1,d_{l-1}} \\
+    ⋮ & ⋱  & ⋮  \\
+    w^l_{d_l,1} & ⋯  & w^l_{d_l,d_{l-1}} \\
+ \end{matrix}\right]  ·
+ \left[ \begin{array}{x} a^{l-1}_1 \\ ⋮ \\ ⋮ \\ a^{l-1}_{d_{l-1}} \end{array}\right]
+ \left[ \begin{array}{b} b^l_1 \\ ⋮ \\ b^l_{d_l} \end{array}\right])
+$$
+
 ## Footnotes
 
 Footnotes allow you to include additional information without cluttering the main text.

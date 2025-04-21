@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 	"text/template"
 
+	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
@@ -71,7 +72,7 @@ func main() {
 		var html bytes.Buffer
 		markdown := goldmark.New(
 
-			goldmark.WithExtensions(extension.GFM, extension.DefinitionList, extension.Footnote, extension.Typographer, myExtension.NewWikilink(fileDir, filesSet)),
+			goldmark.WithExtensions(extension.GFM, extension.DefinitionList, extension.Footnote, extension.Typographer, myExtension.NewWikilink(fileDir, filesSet), mathjax.MathJax),
 			goldmark.WithParserOptions(
 				parser.WithAutoHeadingID(),
 			),
