@@ -1,0 +1,7 @@
+# build docs
+build:
+    mkdir public
+
+# serve docs
+serve: build
+    static-web-server -p 8080
