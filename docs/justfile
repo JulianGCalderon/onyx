@@ -2,6 +2,7 @@
 build:
     mkdir -p public
     cp -r styles public
+    go run ../cmd/onyx
 
 # serve docs
 serve: build
