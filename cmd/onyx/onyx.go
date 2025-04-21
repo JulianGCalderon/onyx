@@ -64,7 +64,12 @@ func main() {
 		err = markdown.Convert(content, &html)
 		utils.AssertNil(err)
 
-		err = templates.ExecuteTemplate(dstFile, "root.gotmpl", html.String())
+		ctx := internal.PageContext{
+			Dir:     filepath.Dir(file),
+			Content: html.String(),
+		}
+
+		err = templates.ExecuteTemplate(dstFile, "root.gotmpl", ctx)
 		utils.AssertNil(err)
 	}
 }
