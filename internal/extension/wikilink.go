@@ -70,27 +70,34 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	}
 
 	block.Advance(closingIndex + 2)
+
 	var (
 		wikilinkStart int = 2
 		wikilinkEnd   int = closingIndex
-	)
-
-	var (
-		titleStart int
-		targetEnd  int
+		targetStart   int = wikilinkStart
+		targetEnd     int = wikilinkEnd
+		titleStart    int = wikilinkStart
+		titleEnd      int = wikilinkEnd
+		hashStart     int
+		hashEnd       int
 	)
 
 	verticalIndex := slices.Index(line, '|')
+	hashIndex := slices.Index(line, '#')
+
 	if verticalIndex >= 0 {
 		targetEnd = verticalIndex
 		titleStart = verticalIndex + 1
-	} else {
-		targetEnd = wikilinkEnd
-		titleStart = wikilinkStart
 	}
 
-	title := line[titleStart:wikilinkEnd]
-	target := line[wikilinkStart:targetEnd]
+	if hashIndex >= 0 {
+		hashStart = hashIndex
+		hashEnd = targetEnd
+		targetEnd = hashStart
+	}
+
+	title := line[titleStart:titleEnd]
+	target := line[targetStart:targetEnd]
 	text := text.Segment{
 		Start:        segment.Start + titleStart,
 		Stop:         segment.Start + wikilinkEnd,
@@ -99,6 +106,7 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	}
 
 	destination := []byte(p.resolveTarget(string(target)))
+	destination = append(destination, line[hashStart:hashEnd]...)
 
 	link := ast.NewLink()
 	link.Title = title
