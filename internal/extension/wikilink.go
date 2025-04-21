@@ -75,6 +75,8 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	}
 	segment.Stop = segment.Start + len(title)
 
+	hash = []byte(normalizeHash(string(hash)))
+
 	destination := []byte(p.resolveTarget(string(target)))
 	destination = append(destination, hash...)
 
@@ -142,4 +144,10 @@ func (p *wikilinkParser) buildPath(destination string) string {
 
 	return destination
 
+}
+
+func normalizeHash(hash string) string {
+	hash = strings.ToLower(hash)
+	hash = strings.ReplaceAll(hash, " ", "-")
+	return hash
 }
