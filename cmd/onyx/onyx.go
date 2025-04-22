@@ -9,6 +9,7 @@ import (
 	"juliangcalderon/onyx/internal/utils"
 	"os"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	mathjax "github.com/litao91/goldmark-mathjax"
@@ -101,6 +102,12 @@ func main() {
 		meta := document.OwnerDocument().Meta()
 
 		if title, ok := meta["title"].(string); ok {
+			newHeading := ast.NewHeading(1)
+			newHeading.AppendChild(newHeading, ast.NewString([]byte(title)))
+			document.InsertBefore(document, document.FirstChild(), newHeading)
+		}
+		if heading, ok := document.FirstChild().(*ast.Heading); !ok || heading.Level > 1 {
+			title := strings.TrimSuffix(filepath.Base(file), filepath.Ext(file))
 			newHeading := ast.NewHeading(1)
 			newHeading.AppendChild(newHeading, ast.NewString([]byte(title)))
 			document.InsertBefore(document, document.FirstChild(), newHeading)
