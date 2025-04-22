@@ -17,6 +17,7 @@ import (
 	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
+	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
 )
 
@@ -72,7 +73,7 @@ func main() {
 			continue
 		}
 
-		var html bytes.Buffer
+		var htmlContent bytes.Buffer
 		markdown := goldmark.New(
 			goldmark.WithExtensions(
 				extension.GFM,
@@ -86,6 +87,9 @@ func main() {
 			goldmark.WithParserOptions(
 				parser.WithAutoHeadingID(),
 			),
+			goldmark.WithRendererOptions(
+				html.WithUnsafe(),
+			),
 		)
 
 		document := markdown.Parser().Parse(text.NewReader(source))
@@ -98,12 +102,12 @@ func main() {
 			document.InsertBefore(document, document.FirstChild(), newHeading)
 		}
 
-		err = markdown.Renderer().Render(&html, source, document)
+		err = markdown.Renderer().Render(&htmlContent, source, document)
 		utils.AssertNil(err)
 
 		ctx := internal.PageContext{
 			Dir:     fileDir,
-			Content: html.String(),
+			Content: htmlContent.String(),
 		}
 
 		err = templates.ExecuteTemplate(dstFile, "root.gotmpl", ctx)

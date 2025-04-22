@@ -93,6 +93,22 @@ $$
  \left[ \begin{array}{b} b^l_1 \\ ⋮ \\ b^l_{d_l} \end{array}\right])
 $$
 
+## Images
+
+Images can be embeded with both regular links, or wikilinks.
+
+![onyx](../assets/onyx-250.png)
+
+If we want to resize the images, we need to use raw html.
+
+```html
+<img src="../assets/onyx.png" alt="onyx" width=100>
+```
+
+It looks like this:
+
+<img src="../assets/onyx.png" alt="onyx" width=100>
+
 ## Footnotes
 
 Footnotes allow you to include additional information without cluttering the main text.
