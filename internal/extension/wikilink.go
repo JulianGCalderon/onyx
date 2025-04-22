@@ -47,14 +47,14 @@ func newWikilinkParser(cwd string, files map[string]struct{}) parser.InlineParse
 }
 
 func (w *wikilinkParser) Trigger() []byte {
-	return []byte{'['}
+	return []byte{'[', '!'}
 }
 
 func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
 	reTarget := `([^|#]*)`
 	reHash := `(#[^|]+)?`
 	reTitle := `(\|.+)?`
-	reFull := fmt.Sprintf(`^\[\[%v%v%v\]\]`, reTarget, reHash, reTitle)
+	reFull := fmt.Sprintf(`^!?\[\[%v%v%v\]\]`, reTarget, reHash, reTitle)
 
 	_, segment := block.Position()
 	re := regexp.MustCompile(reFull)
@@ -65,6 +65,15 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	target := matches[1]
 	hash := matches[2]
 	title := matches[3]
+
+	if len(target) == 0 && len(hash) <= 1 && len(title) <= 1 {
+		return nil
+	}
+
+	embed := matches[0][0] == '!'
+	if embed {
+		segment.Start += len("!")
+	}
 
 	if len(title) == 0 {
 		segment.Start += len("[[")
@@ -85,7 +94,11 @@ func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Con
 	link.Destination = destination
 	link.AppendChild(link, ast.NewTextSegment(segment))
 
-	return link
+	if embed {
+		return ast.NewImage(link)
+	} else {
+		return link
+	}
 }
 
 // Resolves the wikilink target returning a path relative to the current directory.

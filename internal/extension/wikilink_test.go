@@ -108,5 +108,11 @@ func TestWikilink(t *testing.T) {
 			Markdown:    `[[file1.png]]`,
 			Expected:    `<p><a href="../file1.png" title="file1.png">file1.png</a></p>`,
 		},
+		{
+			No:          15,
+			Description: "Wikilink with embed",
+			Markdown:    `![[file1.png|title]]`,
+			Expected:    `<p><img src="../file1.png" alt="title" title="title"></p>`,
+		},
 	}, t)
 }
