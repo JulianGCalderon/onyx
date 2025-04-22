@@ -19,6 +19,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"github.com/yuin/goldmark/text"
+	"go.abhg.dev/goldmark/anchor"
 )
 
 const ContentPath = "content"
@@ -81,6 +82,9 @@ func main() {
 				extension.Footnote,
 				extension.Typographer,
 				mathjax.MathJax,
+				&anchor.Extender{
+					Texter: anchor.Text("#"),
+				},
 				meta.New(meta.WithStoresInDocument()),
 				myExtension.NewWikilink(fileDir, filesSet),
 			),
