@@ -1,4 +1,6 @@
-# Hello, Onyx!
+---
+title: Hello, Onyx!
+---
 
 [Onyx](https://github.com/JulianGCalderon/onyx) is a static site generator (SSG) built in Go, designed with Obsidian users in mind.
 

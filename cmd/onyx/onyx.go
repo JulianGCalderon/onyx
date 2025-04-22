@@ -14,6 +14,7 @@ import (
 	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
+	"github.com/yuin/goldmark/ast"
 	"github.com/yuin/goldmark/extension"
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/text"
@@ -73,15 +74,31 @@ func main() {
 
 		var html bytes.Buffer
 		markdown := goldmark.New(
-
-			goldmark.WithExtensions(extension.GFM, extension.DefinitionList, extension.Footnote, extension.Typographer, myExtension.NewWikilink(fileDir, filesSet), mathjax.MathJax, meta.Meta),
+			goldmark.WithExtensions(
+				extension.GFM,
+				extension.DefinitionList,
+				extension.Footnote,
+				extension.Typographer,
+				mathjax.MathJax,
+				meta.New(meta.WithStoresInDocument()),
+				myExtension.NewWikilink(fileDir, filesSet),
+			),
 			goldmark.WithParserOptions(
 				parser.WithAutoHeadingID(),
 			),
 		)
 
-		ast := markdown.Parser().Parse(text.NewReader(source))
-		err = markdown.Renderer().Render(&html, source, ast)
+		document := markdown.Parser().Parse(text.NewReader(source))
+
+		meta := document.OwnerDocument().Meta()
+
+		if title, ok := meta["title"].(string); ok {
+			newHeading := ast.NewHeading(1)
+			newHeading.AppendChild(newHeading, ast.NewString([]byte(title)))
+			document.InsertBefore(document, document.FirstChild(), newHeading)
+		}
+
+		err = markdown.Renderer().Render(&html, source, document)
 		utils.AssertNil(err)
 
 		ctx := internal.PageContext{

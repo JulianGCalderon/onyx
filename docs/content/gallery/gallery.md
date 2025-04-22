@@ -1,4 +1,6 @@
-# The Rock Gallery
+---
+title: The Rock Gallery
+---
 
 This page showcases examples of the Markdown features supported by Onyx.
 
