@@ -97,17 +97,17 @@ $$
 
 Images can be embeded with both regular links, or wikilinks.
 
-![onyx](../assets/onyx-250.png)
+![[onyx-250.png|onyx]]
 
 If we want to resize the images, we need to use raw html.
 
 ```html
-<img src="../assets/onyx.png" alt="onyx" width=100>
+<img src="../assets/onyx.png" alt="onyx" title="onyx" width=100>
 ```
 
 It looks like this:
 
-<img src="../assets/onyx.png" alt="onyx" width=100>
+<img src="../assets/onyx.png" alt="onyx" title="onyx" width=100>
 
 ## Footnotes
 
