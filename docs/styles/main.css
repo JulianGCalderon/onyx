@@ -58,3 +58,9 @@ dl dt {
 dl dd {
   margin-block: .5em;
 }
+
+img {
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
+}
