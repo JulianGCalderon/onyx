@@ -10,5 +10,7 @@ Internally, it uses [goldmark](https://github.com/yuin/goldmark), a Markdown par
 - Definition Lists
 - Footnotes
 - Wikilinks
+- Math
+- Metadata
 
 Explore the [[gallery]] to see these features in action.
