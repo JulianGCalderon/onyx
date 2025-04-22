@@ -51,9 +51,9 @@ func (w *wikilinkParser) Trigger() []byte {
 }
 
 func (p *wikilinkParser) Parse(parent ast.Node, block text.Reader, pc parser.Context) ast.Node {
-	reTarget := `([^|#]*)`
-	reHash := `(#[^|]+)?`
-	reTitle := `(\|.+)?`
+	reTarget := `([^|#]*?)`
+	reHash := `(#[^|]+?)?`
+	reTitle := `(\|.+?)?`
 	reFull := fmt.Sprintf(`^!?\[\[%v%v%v\]\]`, reTarget, reHash, reTitle)
 
 	_, segment := block.Position()
