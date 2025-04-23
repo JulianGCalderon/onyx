@@ -5,8 +5,8 @@ import (
 	"io"
 	"io/fs"
 	"juliangcalderon/onyx/internal"
-	myExtension "juliangcalderon/onyx/internal/extension"
 	"juliangcalderon/onyx/internal/utils"
+	"juliangcalderon/onyx/internal/wikilink"
 	"os"
 	"path/filepath"
 	"strings"
@@ -87,7 +87,7 @@ func main() {
 					Texter: anchor.Text("#"),
 				},
 				meta.New(meta.WithStoresInDocument()),
-				myExtension.NewWikilink(fileDir, filesSet),
+				wikilink.NewWikilink(fileDir, filesSet),
 			),
 			goldmark.WithParserOptions(
 				parser.WithAutoHeadingID(),

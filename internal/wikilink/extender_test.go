@@ -1,7 +1,7 @@
-package extension_test
+package wikilink_test
 
 import (
-	"juliangcalderon/onyx/internal/extension"
+	"juliangcalderon/onyx/internal/wikilink"
 	"testing"
 
 	"github.com/yuin/goldmark"
@@ -20,7 +20,7 @@ func TestWikilink(t *testing.T) {
 
 	m := goldmark.New(
 		goldmark.WithExtensions(
-			extension.NewWikilink(cwd, files),
+			wikilink.NewWikilink(cwd, files),
 		),
 	)
 	testutil.DoTestCases(m, []testutil.MarkdownTestCase{
