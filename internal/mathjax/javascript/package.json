@@ -1,0 +1,9 @@
+{
+  "name": "mathjax",
+  "type": "module",
+  "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "mathjax-full": "^3.2.2"
+  }
+}
