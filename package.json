@@ -1,17 +1,17 @@
 {
   "name": "onyx",
   "version": "0.0.1",
-  "main": "dist/index.js",
+  "author": "JulianGCalderon",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JulianGCalderon/onyx.git"
   },
-  "author": "JulianGCalderon",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/JulianGCalderon/onyx/issues"
   },
   "homepage": "https://github.com/JulianGCalderon/onyx#readme",
+  "main": "dist/index.js",
   "devDependencies": {
     "typescript": "^5.8.3"
   }
