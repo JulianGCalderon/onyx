@@ -12,6 +12,10 @@
   },
   "homepage": "https://github.com/JulianGCalderon/onyx#readme",
   "main": "dist/index.js",
+  "scripts": {
+    "build": "npx tsc",
+    "onyx": "npm run build && node ."
+  },
   "devDependencies": {
     "typescript": "^5.8.3"
   }
