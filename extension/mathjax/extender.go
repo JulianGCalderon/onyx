@@ -35,6 +35,9 @@ func (e *mathjax) Extend(m goldmark.Markdown) {
 	m.Parser().AddOptions(parser.WithInlineParsers(
 		util.Prioritized(NewMathjaxInlineParser(), 501),
 	))
+	m.Parser().AddOptions(parser.WithBlockParsers(
+		util.Prioritized(NewMathjaxBlockParser(), 701),
+	))
 	m.Renderer().AddOptions(renderer.WithNodeRenderers(
 		util.Prioritized(NewMathjaxRenderer(e.js), 1001),
 	))

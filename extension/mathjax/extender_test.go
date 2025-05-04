@@ -35,7 +35,19 @@ func TestMathjax(t *testing.T) {
 			Markdown:    `$a^2 + b^2 + c^2$`,
 			Expected:    "<p>" + instance.Render("a^2 + b^2 + c^2", "inline") + "</p>",
 		},
+		{
+			No:          2,
+			Description: "Block Pitagoras",
+			Markdown: "$$\n" +
+				"a^2 + b^2 + c^2\n" +
+				"$$\n",
+			Expected: instance.Render("a^2 + b^2 + c^2", "display"),
+		},
 	}, t)
+
+	if t.Failed() {
+		return
+	}
 
 	actualCSS := []byte(mathjax.CSS())
 	expectedCSS := []byte(instance.Css())
