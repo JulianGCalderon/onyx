@@ -11,5 +11,8 @@
   "bugs": {
     "url": "https://github.com/JulianGCalderon/onyx/issues"
   },
-  "homepage": "https://github.com/JulianGCalderon/onyx#readme"
+  "homepage": "https://github.com/JulianGCalderon/onyx#readme",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
 }
