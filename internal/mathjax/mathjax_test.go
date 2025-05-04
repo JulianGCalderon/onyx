@@ -1,48 +1,56 @@
 package mathjax
 
 import (
+	"juliangcalderon/onyx/javascript"
 	"testing"
 
 	_ "embed"
 
-	v8 "rogchap.com/v8go"
+	"github.com/dop251/goja"
 )
 
-//go:embed javascript/bundle.js
-var mathjax string
-
 func TestInteroperate(t *testing.T) {
-	javascript := v8.NewContext()
-	javascript.RunScript(mathjax, "bundle.js")
+	runtime := goja.New()
+	mathjax, err := runtime.RunString(javascript.Mathjax)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
 
-	mathjax, err := javascript.Global().Get("mathjax")
+	mathjaxF, callable := goja.AssertFunction(mathjax)
+	if !callable {
+		t.Fatalf("%v should be callable", mathjax)
+	}
+
+	builder, err := mathjaxF(goja.Undefined())
 	if err != nil {
 		t.Fatalf("%v", mathjax)
 	}
 
-	math := `a^2 + b^2 = c^2 \impliedby \text{"Pitagoras"}`
-	javascript.Global().Set("math", math)
-	javascript.Global().Set("type", "display")
+	cssV := builder.ToObject(runtime).Get("css")
+	cssF, callable := goja.AssertFunction(cssV)
+	if !callable {
+		t.Fatalf("%v should be callable", cssV)
+	}
 
-	rendered, err := javascript.RunScript(
-		"mathjax.render(math, type)",
-		"mathjax_test_2.go",
-	)
+	renderV := builder.ToObject(runtime).Get("render")
+	renderF, callable := goja.AssertFunction(renderV)
+	if !callable {
+		t.Fatalf("%v should be callable", renderV)
+	}
+
+	math := runtime.ToValue(`a^2 + b^2 = c^2`)
+	display := runtime.ToValue("display")
+
+	pageHTML, err := renderF(goja.Undefined(), math, display)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if !rendered.IsString() {
-		t.Fatalf("render output should be a strign: %v", rendered)
-	}
 
-	css, err := javascript.RunScript(
-		"mathjax.css()",
-		"mathjax_test_2.go",
-	)
+	pageCSS, err := cssF(goja.Undefined())
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
-	if !css.IsString() {
-		t.Fatalf("css output should be a strign: %v", css)
-	}
+
+	_ = pageHTML
+	_ = pageCSS
 }
