@@ -3,6 +3,7 @@ import { TeX } from "mathjax-full/js/input/tex.js";
 import { CHTML } from "mathjax-full/js/output/chtml.js";
 import { liteAdaptor } from "mathjax-full/js/adaptors/liteAdaptor.js";
 import { RegisterHTMLHandler } from "mathjax-full/js/handlers/html.js";
+import { AssistiveMmlHandler } from "mathjax-full/js/a11y/assistive-mml.js";
 import { AllPackages } from "mathjax-full/js/input/tex/AllPackages.js";
 
 const FONT_URL =
@@ -10,7 +11,8 @@ const FONT_URL =
 
 export default function() {
   const adaptor = liteAdaptor();
-  RegisterHTMLHandler(adaptor);
+  const handler = RegisterHTMLHandler(adaptor);
+  AssistiveMmlHandler(handler);
   const tex = new TeX({ packages: AllPackages });
   const chtml = new CHTML({ fontURL: FONT_URL });
   const html = mathjax.document("", { InputJax: tex, OutputJax: chtml });
