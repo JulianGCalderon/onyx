@@ -1,4 +1,4 @@
-package javascript
+package node
 
 import _ "embed"
 

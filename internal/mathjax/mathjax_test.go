@@ -1,7 +1,7 @@
 package mathjax
 
 import (
-	"juliangcalderon/onyx/javascript"
+	"juliangcalderon/onyx/node"
 	"testing"
 
 	_ "embed"
@@ -11,7 +11,7 @@ import (
 
 func TestInteroperate(t *testing.T) {
 	runtime := goja.New()
-	mathjax, err := runtime.RunString(javascript.Mathjax)
+	mathjax, err := runtime.RunString(node.Mathjax)
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
