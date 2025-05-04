@@ -1,0 +1,15 @@
+{
+  "name": "onyx",
+  "version": "0.0.1",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JulianGCalderon/onyx.git"
+  },
+  "author": "JulianGCalderon",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JulianGCalderon/onyx/issues"
+  },
+  "homepage": "https://github.com/JulianGCalderon/onyx#readme"
+}
