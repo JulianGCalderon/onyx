@@ -16,11 +16,11 @@ export default function() {
   const html = mathjax.document("", { InputJax: tex, OutputJax: chtml });
 
   return {
-    css() {
+    Css() {
       return adaptor.textContent(chtml.styleSheet(html));
     },
 
-    render(content, type) {
+    Render(content, type) {
       const node = html.convert(content, {
         display: type == "display",
       });
