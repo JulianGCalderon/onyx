@@ -1,7 +1,7 @@
 package internal
 
 import (
-	"juliangcalderon/onyx/internal/utils"
+	"juliangcalderon/onyx/utils"
 	"path/filepath"
 )
 

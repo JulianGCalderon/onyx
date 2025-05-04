@@ -1,7 +1,7 @@
 package wikilink_test
 
 import (
-	"juliangcalderon/onyx/internal/wikilink"
+	"juliangcalderon/onyx/extension/wikilink"
 	"testing"
 
 	"github.com/yuin/goldmark"
