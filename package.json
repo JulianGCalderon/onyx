@@ -12,6 +12,7 @@
   },
   "homepage": "https://github.com/JulianGCalderon/onyx#readme",
   "main": "dist/index.js",
+  "type": "module",
   "scripts": {
     "build": "npx tsc",
     "onyx": "npm run build && node ."
