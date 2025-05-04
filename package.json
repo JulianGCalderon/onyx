@@ -1,7 +1,7 @@
 {
   "name": "onyx",
   "version": "0.0.1",
-  "main": "index.js",
+  "main": "dist/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/JulianGCalderon/onyx.git"
