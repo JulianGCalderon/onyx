@@ -1,5 +1,5 @@
 deps:
 	npm install
 
-bundle.js: deps
+bundle: deps
 	npx rollup -c

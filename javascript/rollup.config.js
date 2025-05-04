@@ -1,12 +1,11 @@
 import commonjs from '@rollup/plugin-commonjs';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
-
+import { globSync } from 'glob';
 
 export default {
-  input: "main.js",
+  input: globSync("bin/*.js"),
   output: {
-    name: "mathjax",
-    file: 'bundle.js',
+    dir: 'bundle',
     format: 'iife'
   },
   plugins: [commonjs(), nodeResolve()]
