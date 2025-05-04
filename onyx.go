@@ -15,6 +15,7 @@ func BuildDstPath(path, root string) string {
 
 type PageContext struct {
 	Dir     string
+	Style   string
 	Content string
 }
 

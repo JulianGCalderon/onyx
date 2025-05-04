@@ -5,6 +5,7 @@ import (
 	"io"
 	"io/fs"
 	"juliangcalderon/onyx"
+	"juliangcalderon/onyx/extension/mathjax"
 	"juliangcalderon/onyx/extension/wikilink"
 	"juliangcalderon/onyx/utils"
 	"os"
@@ -12,7 +13,6 @@ import (
 	"strings"
 	"text/template"
 
-	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/yuin/goldmark"
 	meta "github.com/yuin/goldmark-meta"
 	"github.com/yuin/goldmark/ast"
@@ -75,6 +75,9 @@ func main() {
 			continue
 		}
 
+		mathjax, err := mathjax.NewIsolatedMathjax()
+		utils.AssertNil(err)
+
 		var htmlContent bytes.Buffer
 		markdown := goldmark.New(
 			goldmark.WithExtensions(
@@ -82,7 +85,7 @@ func main() {
 				extension.DefinitionList,
 				extension.Footnote,
 				extension.Typographer,
-				mathjax.MathJax,
+				mathjax,
 				&anchor.Extender{
 					Texter: anchor.Text("#"),
 				},
@@ -119,6 +122,7 @@ func main() {
 		ctx := internal.PageContext{
 			Dir:     fileDir,
 			Content: htmlContent.String(),
+			Style:   mathjax.CSS(),
 		}
 
 		err = templates.ExecuteTemplate(dstFile, "root.gotmpl", ctx)
