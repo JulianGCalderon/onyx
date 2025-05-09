@@ -15,7 +15,7 @@
   "type": "module",
   "scripts": {
     "build": "npx tsc",
-    "docs": "npm run build && cd docs && node .."
+    "docs": "npm run build && node ."
   },
   "devDependencies": {
     "typescript": "^5.8.3"
