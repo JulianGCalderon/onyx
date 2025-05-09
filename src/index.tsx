@@ -2,10 +2,15 @@ import { copyFile, mkdir, readFile, writeFile, cp } from "fs/promises";
 import { glob } from "glob";
 import process from "process";
 import rehypeStringify from "rehype-stringify";
+import { renderToStaticMarkup } from "react-dom/server";
+
 import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import { unified } from "unified";
 import path from "path";
+import rehypeReact from "rehype-react";
+import { JSX } from "react/jsx-runtime";
+import production from "react/jsx-runtime";
 
 console.log("CWD:", process.cwd());
 
@@ -25,19 +30,34 @@ for (const srcFile of files) {
 
   dstFile = path.format({ ...path.parse(dstFile), base: "", ext: ".html" });
 
-  const data = await readFile(srcFile, "utf8");
+  const mdContent = await readFile(srcFile, "utf8");
 
-  const html = await unified()
+  const htmlContent = await unified()
     .use(remarkParse)
     .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeStringify)
-    .process(data);
+    .use(rehypeReact, production)
+    .process(mdContent);
+
+  const page = Template(htmlContent.result);
+
+  const pageRaw = renderToStaticMarkup(page);
 
   const parent = path.dirname(dstFile);
   await mkdir(parent, { recursive: true });
 
-  await writeFile(dstFile, html.value);
+  await writeFile(dstFile, pageRaw);
 }
 
 console.log("Copying styles!");
 await cp("styles", "public/styles", { recursive: true });
+
+function Template(content: JSX.Element) {
+  return (
+    <html>
+      <head>
+        <link rel="stylesheet" href="styles/main.css" />
+      </head>
+      <body>{content}</body>
+    </html>
+  );
+}
