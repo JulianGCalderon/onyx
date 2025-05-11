@@ -1,0 +1,19 @@
+---
+export function getStaticPaths() {
+  return [
+    { params: { path: "index" }},
+  ];
+}
+
+import * as note from '../../content/index.md';
+const Content = note.Content;
+---
+
+<html>
+	<head>
+	</head>
+	<body>
+		<h1>{note.frontmatter.title}</h1>
+		<Content>
+	</body>
+</html>
