@@ -1,9 +1,16 @@
 ---
 import { getCollection, render } from "astro:content";
+import path from "path";
 
 export async function getStaticPaths() {
   const posts = await getCollection("note");
   return posts.map((post) => {
+    let slug = post.id;
+    let parsedSlug = path.parse(post.id);
+    if (parsedSlug.base == "index") {
+      slug = parsedSlug.dir;
+    }
+
     return {
       params: { slug: post.id == "index" ? undefined : post.id },
       props: { post },
