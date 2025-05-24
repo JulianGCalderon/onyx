@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "astro": "^5.7.12",
-    "path": "^0.12.7",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
     "prettier-plugin-astro": "^0.14.1"
   }
 }
